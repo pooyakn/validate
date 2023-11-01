@@ -13,7 +13,7 @@ func TestNew(t *testing.T) {
 		"age":  {"12"},
 		"name": {"inhere"},
 	})
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"age":  "required|strInt",
 		"name": "required|string:3|strLen:4,6",
 	})
@@ -29,7 +29,7 @@ func TestRule_Apply(t *testing.T) {
 	}
 
 	v := Map(mp)
-	v.ConfigRules(MS{
+	v.ConfigRules(map[string]string{
 		"name": `regex:\w+`,
 	})
 	v.AddRule("name", "stringLength", 3)
@@ -80,7 +80,7 @@ func TestValidation_RequiredIf(t *testing.T) {
 		"name": "lee",
 		"age":  "12",
 	})
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"age":     "required_if:name,lee",
 		"nothing": "required_if:age,12,13,14",
 	})
@@ -95,7 +95,7 @@ func TestValidation_RequiredUnless(t *testing.T) {
 		"name":    "lee",
 		"nothing": "",
 	})
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"age":     "required_unless:name,lee",
 		"nothing": "required_unless:age,12,13,14",
 	})
@@ -109,7 +109,7 @@ func TestValidation_RequiredWith(t *testing.T) {
 		"age":  "18",
 		"name": "test",
 	})
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"age":      "required_with:name,city",
 		"anything": "required_with:sex,city",
 		"nothing":  "required_with:age,name",
@@ -126,7 +126,7 @@ func TestValidation_RequiredWithAll(t *testing.T) {
 		"sex":     "man",
 		"nothing": "",
 	})
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"age":      "required_with_all:name,sex,city",
 		"anything": "required_with_all:school,city",
 		"nothing":  "required_with_all:age,name,sex",
@@ -142,7 +142,7 @@ func TestValidation_RequiredWithout(t *testing.T) {
 		"age":  "18",
 		"name": "test",
 	})
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"age":      "required_without:city",
 		"anything": "required_without:age,name",
 		"nothing":  "required_without:sex,name",
@@ -157,7 +157,7 @@ func TestValidation_RequiredWithoutAll(t *testing.T) {
 		"age":     "18",
 		"name":    "test",
 		"nothing": "",
-	}).StringRules(MS{
+	}).StringRules(map[string]string{
 		"age":      "required_without_all:name,city",
 		"anything": "required_without:age,name",
 		"nothing":  "required_without_all:sex,city",
@@ -192,7 +192,7 @@ func TestVariadicArgs(t *testing.T) {
 func TestValidation_Validate_filter(t *testing.T) {
 	v := Map(M{
 		"age": "abc",
-	}).FilterRules(MS{
+	}).FilterRules(map[string]string{
 		"age": "int",
 	})
 

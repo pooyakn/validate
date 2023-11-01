@@ -122,7 +122,7 @@ func (r *Rule) SetMessage(errMsg string) *Rule {
 //		"name": "error message 1",
 //		"email": "error message 2",
 //	})
-func (r *Rule) SetMessages(msgMap MS) *Rule {
+func (r *Rule) SetMessages(msgMap map[string]string) *Rule {
 	r.messages = msgMap
 	return r
 }
@@ -220,7 +220,7 @@ func (v *Validation) StringRule(field, rule string, filterRule ...string) *Valid
 //		"name": "required|string|min_len:12",
 //		"age": "required|int|min:12",
 //	})
-func (v *Validation) StringRules(mp MS) *Validation {
+func (v *Validation) StringRules(mp map[string]string) *Validation {
 	for name, rule := range mp {
 		v.StringRule(name, rule)
 	}
@@ -235,7 +235,7 @@ func (v *Validation) StringRules(mp MS) *Validation {
 //		"name": "required|string|min:12",
 //		"age": "required|int|min:12",
 //	})
-func (v *Validation) ConfigRules(mp MS) *Validation {
+func (v *Validation) ConfigRules(mp map[string]string) *Validation {
 	for name, rule := range mp {
 		v.StringRule(name, rule)
 	}

@@ -354,7 +354,7 @@ func (v *Validation) WithError(err error) *Validation {
 	return v
 }
 
-// AddError message for a field
+// AddError add a message for a field
 func (v *Validation) AddError(field, validator, msg string) {
 	if !v.hasError {
 		v.hasError = true
@@ -364,9 +364,22 @@ func (v *Validation) AddError(field, validator, msg string) {
 	v.Errors.Add(field, validator, msg)
 }
 
+// AddErrorWithArgs add a message for a field with arguments
+func (v *Validation) AddErrorWithArgs(field, validator, msg string, args []any) {
+	if !v.hasError {
+		v.hasError = true
+	}
+
+	field = v.trans.FieldName(field)
+	v.Errors.AddWithArgs(field, validator, D{
+		Message: msg,
+		Args:    args,
+	})
+}
+
 // AddErrorf add a formatted error message
 func (v *Validation) AddErrorf(field, msgFormat string, args ...any) {
-	v.AddError(field, validateError, fmt.Sprintf(msgFormat, args...))
+	v.AddErrorWithArgs(field, validateError, fmt.Sprintf(msgFormat, args...), args)
 }
 
 // Trans get translator

@@ -17,21 +17,26 @@ import (
 	"github.com/gookit/goutil/reflects"
 )
 
+type D struct {
+	Message string `json:"message"`
+	Args    []any  `json:"args,omitempty"`
+}
+
 // M is short name for map[string]any
 type M map[string]any
 
 // MS is short name for map[string]string
-type MS map[string]string
+type MS map[string]D
 
 // SValues simple values
 type SValues map[string][]string
 
 // One get one item's value string
-func (ms MS) One() string {
+func (ms MS) One() D {
 	for _, msg := range ms {
 		return msg
 	}
-	return ""
+	return D{}
 }
 
 // String convert map[string]string to string
@@ -42,7 +47,7 @@ func (ms MS) String() string {
 
 	ss := make([]string, 0, len(ms))
 	for name, msg := range ms {
-		ss = append(ss, " "+name+": "+msg)
+		ss = append(ss, " "+name+": "+msg.Message)
 	}
 
 	return strings.Join(ss, "\n")

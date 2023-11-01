@@ -69,7 +69,7 @@ func TestAddFilter(t *testing.T) {
 		"myFilter2": func(val any, a, b string) (string, error) { return "myFilter2:" + a + b, nil },
 	})
 	v.FilterRule("key0", "myFilter0")
-	v.FilterRules(MS{
+	v.FilterRules(map[string]string{
 		"key1": "myFilter2:a,b",
 		"name": "trim|upper",
 		"tags": "str2arr:,",
@@ -104,7 +104,7 @@ func TestAddFilter(t *testing.T) {
 	v.AddFilter("myFilter3", func(s string) (string, error) {
 		return s, fmt.Errorf("report a error")
 	})
-	v.FilterRules(MS{
+	v.FilterRules(map[string]string{
 		"name": "invalid|int",
 	})
 	v.Filtering()
@@ -117,7 +117,7 @@ func TestAddFilter(t *testing.T) {
 	v.AddFilter("myFilter3", func(s string) (string, error) {
 		return s, fmt.Errorf("report a error")
 	})
-	v.FilterRules(MS{
+	v.FilterRules(map[string]string{
 		"age": "myFilter3",
 	})
 	v.Filtering()

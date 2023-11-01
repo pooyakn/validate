@@ -108,7 +108,7 @@ func (r *Rule) Apply(v *Validation) (stop bool) {
 			status := r.fileValidate(field, name, v)
 			if status == statusFail {
 				// build and collect error message
-				v.AddError(field, r.validator, r.errorMessage(field, r.validator, v))
+				v.AddErrorWithArgs(field, r.validator, r.errorMessage(field, r.validator, v), r.arguments)
 				if v.StopOnError {
 					return true
 				}
@@ -146,7 +146,7 @@ func (r *Rule) Apply(v *Validation) (stop bool) {
 		// apply filter func.
 		if exist && r.filterFunc != nil {
 			if val, err = r.filterFunc(val); err != nil {
-				v.AddError(filterError, filterError, err.Error())
+				v.AddErrorWithArgs(filterError, filterError, err.Error(), r.arguments)
 				return true
 			}
 
@@ -175,7 +175,7 @@ func (r *Rule) Apply(v *Validation) (stop bool) {
 		if r.valueValidate(field, name, val, v) {
 			v.safeData[field] = val
 		} else { // build and collect error message
-			v.AddError(field, r.validator, r.errorMessage(field, r.validator, v))
+			v.AddErrorWithArgs(field, r.validator, r.errorMessage(field, r.validator, v), r.arguments)
 		}
 
 		if v.shouldStop() {

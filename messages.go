@@ -44,8 +44,21 @@ func (es Errors) Empty() bool {
 	return len(es) == 0
 }
 
-// Add a error for the field
+// Add an error for the field
 func (es Errors) Add(field, validator, message string) {
+	if _, ok := es[field]; ok {
+		es[field][validator] = D{
+			Message: message,
+		}
+	} else {
+		es[field] = MS{validator: D{
+			Message: message,
+		}}
+	}
+}
+
+// AddWithArgs an error with arguments for the field
+func (es Errors) AddWithArgs(field, validator string, message D) {
 	if _, ok := es[field]; ok {
 		es[field][validator] = message
 	} else {
@@ -75,7 +88,7 @@ func (es Errors) OneError() error {
 func (es Errors) Random() string {
 	if len(es) > 0 {
 		for _, fe := range es {
-			return fe.One()
+			return fe.One().Message
 		}
 	}
 	return ""
@@ -86,7 +99,13 @@ func (es Errors) All() map[string]map[string]string {
 	mm := make(map[string]map[string]string, len(es))
 
 	for field, fe := range es {
-		mm[field] = fe
+		feMap := make(map[string]string, len(fe))
+
+		for validator, d := range fe {
+			feMap[validator] = d.Message
+		}
+
+		mm[field] = feMap
 	}
 	return mm
 }
@@ -120,13 +139,17 @@ func (es Errors) HasField(field string) bool {
 
 // Field gets all errors for the field
 func (es Errors) Field(field string) map[string]string {
-	return es[field]
+	feMap := make(map[string]string, len(es[field]))
+	for validator, d := range es[field] {
+		feMap[validator] = d.Message
+	}
+	return feMap
 }
 
 // FieldOne returns an error message for the field
 func (es Errors) FieldOne(field string) string {
 	if fe, ok := es[field]; ok {
-		return fe.One()
+		return fe.One().Message
 	}
 	return ""
 }

@@ -81,7 +81,7 @@ func TestValidation_StringRule(t *testing.T) {
 	is := assert.New(t)
 
 	v := Map(mpSample)
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"name":  "string|len:6|minLen:2|maxLen:10",
 		"oldSt": "lt:5|gt:0|in:1,2,3|notIn:4,5",
 		"age":   "max:100",
@@ -110,7 +110,7 @@ func TestErrorMessages(t *testing.T) {
 
 	v = Map(mpSample)
 	v.StopOnError = false
-	v.AddRule("oldSt, newSt", "min", 3).SetMessages(MS{
+	v.AddRule("oldSt, newSt", "min", 3).SetMessages(map[string]string{
 		"oldSt": "oldSt's err msg",
 		"newSt": "newSt's err msg",
 	})
@@ -134,7 +134,7 @@ func TestErrorMessages(t *testing.T) {
 
 	// SetMessages, key is "field.validator"
 	v = Map(mpSample)
-	v.AddRule("name", "int").SetMessages(MS{
+	v.AddRule("name", "int").SetMessages(map[string]string{
 		"name.int": "HH, value must be INTEGER",
 	})
 	is.False(v.Validate())
@@ -142,7 +142,7 @@ func TestErrorMessages(t *testing.T) {
 
 	// AddMessages
 	v = Map(mpSample)
-	v.AddMessages(MS{"isInt": "value must be INTEGER!"})
+	v.AddMessages(map[string]string{"isInt": "value must be INTEGER!"})
 	v.AddRule("name", "isInt")
 	is.False(v.Validate())
 	is.Equal("value must be INTEGER!", v.Errors.FieldOne("name"))
@@ -173,14 +173,14 @@ func (f UserForm) CustomValidator(val string) bool {
 }
 
 func (f UserForm) ConfigValidation(v *Validation) {
-	v.AddTranslates(MS{
+	v.AddTranslates(map[string]string{
 		"Safe": "Safe-Name",
 	})
 }
 
 // Messages you can custom define validator error messages.
 func (f UserForm) Messages() map[string]string {
-	return MS{
+	return map[string]string{
 		"required":      "oh! the {field} is required",
 		"Name.required": "message for special field",
 	}
@@ -188,7 +188,7 @@ func (f UserForm) Messages() map[string]string {
 
 // Translates you can be custom field translates.
 func (f UserForm) Translates() map[string]string {
-	return MS{
+	return map[string]string{
 		"Name":  "User Name",
 		"Email": "User Email",
 	}
@@ -256,7 +256,7 @@ func TestStruct_use_method_validate(t *testing.T) {
 
 	err := v.ValidateE()
 	is.Error(err)
-	is.Equal(`{"Code":{"customValidator":"Code field did not pass validation"}}`, string(err.JSON()))
+	is.Equal(`{"Code":{"customValidator":{"message":"Code field did not pass validation"}}}`, string(err.JSON()))
 }
 
 func TestJSON(t *testing.T) {
@@ -269,7 +269,7 @@ func TestJSON(t *testing.T) {
 	v := JSON(jsonStr)
 
 	v.StopOnError = false
-	v.ConfigRules(MS{
+	v.ConfigRules(map[string]string{
 		"name": "required|minLen:7",
 		"age":  "required|int|range:1,99",
 	})
@@ -298,7 +298,7 @@ func TestJSON(t *testing.T) {
 	d, err := FromJSONBytes([]byte(jsonStr))
 	is.Nil(err)
 	v = d.Create()
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"name": "string:6,12",
 		"age":  "range:1,100",
 	})
@@ -320,7 +320,7 @@ func TestFromQuery(t *testing.T) {
 	v := FromQuery(data).Create()
 	v.StopOnError = false
 	v.FilterRule("age", "int")
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"name": "required|minLen:7",
 		"age":  "required|int|min:10",
 	})
@@ -341,7 +341,7 @@ func TestFromQuery(t *testing.T) {
 		opt.SkipOnEmpty = false
 	})
 	v = FromQuery(data).Create()
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"name": "file",
 		"age":  "image",
 	})
@@ -383,12 +383,12 @@ func TestValidate_Request(t *testing.T) {
 
 	// create validation
 	v = d.Validation()
-	v.FilterRules(MS{
+	v.FilterRules(map[string]string{
 		"age":      "trim|int",
 		"name":     "trim|ucFirst",
 		"remember": "bool",
 	})
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"name":     "string|minLen:5",
 		"age":      "int|min:1",
 		"email":    "email",
@@ -444,7 +444,7 @@ func TestFromRequest_FileForm(t *testing.T) {
 
 	// - create validation
 	v := d.Validation()
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"age":  "min:1",
 		"file": "required|mimeTypes:image/jpeg,image/jpg",
 	})
@@ -586,7 +586,7 @@ func TestFieldCompare(t *testing.T) {
 	is := assert.New(t)
 	v := Map(mpSample)
 	v.StopOnError = false
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"oldSt": "gteField:notExist|gtField:notExist",
 		"newSt": "lteField:notExist|ltField:notExist",
 		"name":  "neField:notExist",
@@ -611,7 +611,7 @@ func TestValidationScene(t *testing.T) {
 
 	v := Map(mp)
 	v.StopOnError = false
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"name": "minLen:7",
 		"age":  "min:101",
 	})
@@ -711,7 +711,7 @@ func TestValidation_ValidateData(t *testing.T) {
 	})
 
 	v := NewEmpty()
-	v.StringRules(MS{
+	v.StringRules(map[string]string{
 		"json": "json",
 	})
 
@@ -800,7 +800,7 @@ func TestStructWithArray(t *testing.T) {
 	is.True(v.IsFail())
 	is.Len(v.Errors, 1)
 	is.Len(v.Errors["Extras"], 1)
-	is.Equal("Extras is required to not be empty", v.Errors["Extras"]["required"])
+	is.Equal("Extras is required to not be empty", v.Errors["Extras"]["required"].Message)
 
 	v = New(WithArray{
 		Extras: []ExtraInfo{
@@ -815,7 +815,7 @@ func TestStructWithArray(t *testing.T) {
 	is.True(v.IsFail())
 	is.Len(v.Errors, 1)
 	is.Len(v.Errors["Extras"], 1)
-	is.Equal("Extras min length is 2", v.Errors["Extras"]["minLen"])
+	is.Equal("Extras min length is 2", v.Errors["Extras"]["minLen"].Message)
 
 	v = New(WithArray{
 		Extras: []ExtraInfo{
@@ -849,7 +849,7 @@ func TestStructWithArray(t *testing.T) {
 	is.False(v.Validate())
 	is.True(v.IsFail())
 	is.Len(v.Errors, 1)
-	is.Equal("Extras.0.Github is required to not be empty", v.Errors["Extras.0.Github"]["required"])
+	is.Equal("Extras.0.Github is required to not be empty", v.Errors["Extras.0.Github"]["required"].Message)
 
 }
 
@@ -888,7 +888,7 @@ func TestStructWithArray_ptrOfArray(t *testing.T) {
 	is.False(v.Validate())
 	is.True(v.IsFail())
 	is.Len(v.Errors, 1)
-	is.Equal("Extras.0.Github is required to not be empty", v.Errors["Extras.0.Github"]["required"])
+	is.Equal("Extras.0.Github is required to not be empty", v.Errors["Extras.0.Github"]["required"].Message)
 
 	v = New(WithArrayPtr{
 		Extras: []*ExtraInfo{
@@ -926,7 +926,7 @@ func TestStructWithMap(t *testing.T) {
 	is.True(v.IsFail())
 	is.Len(v.Errors, 1)
 	is.Len(v.Errors["Extras"], 1)
-	is.Equal("Extras is required to not be empty", v.Errors["Extras"]["required"])
+	is.Equal("Extras is required to not be empty", v.Errors["Extras"]["required"].Message)
 
 	v = New(WithMap{
 		Extras: map[string]ExtraInfo{
@@ -941,7 +941,7 @@ func TestStructWithMap(t *testing.T) {
 	is.True(v.IsFail())
 	is.Len(v.Errors, 1)
 	is.Len(v.Errors["Extras"], 1)
-	is.Equal("Extras min length is 2", v.Errors["Extras"]["minLen"])
+	is.Equal("Extras min length is 2", v.Errors["Extras"]["minLen"].Message)
 
 	v = New(WithMap{
 		Extras: map[string]ExtraInfo{
@@ -980,7 +980,7 @@ func TestStructWithMap(t *testing.T) {
 	if _, ok := v.Errors[key]["required"]; !ok {
 		key = "Extras.second.Github"
 	}
-	is.Equal(fmt.Sprintf("%s is required to not be empty", key), v.Errors[key]["required"])
+	is.Equal(fmt.Sprintf("%s is required to not be empty", key), v.Errors[key]["required"].Message)
 
 	v = New(WithPtrOfMap{
 		Extras: &map[string]ExtraInfo{
@@ -1019,7 +1019,7 @@ func TestStructWithMap(t *testing.T) {
 	if _, ok := v.Errors[key]["required"]; !ok {
 		key = "Extras.second.Github"
 	}
-	is.Equal(fmt.Sprintf("%s is required to not be empty", key), v.Errors[key]["required"])
+	is.Equal(fmt.Sprintf("%s is required to not be empty", key), v.Errors[key]["required"].Message)
 
 	v = New(WithMapPtrs{
 		Extras: map[string]*ExtraInfo{

@@ -128,11 +128,13 @@ func Test_IsZero(t *testing.T) {
 func TestMS_String(t *testing.T) {
 	ms := MS{}
 
-	assert.Equal(t, "", ms.One())
+	assert.Equal(t, "", ms.One().Message)
 	assert.Equal(t, "", ms.String())
 
-	ms["key"] = "val"
-	assert.Equal(t, "val", ms.One())
+	ms["key"] = D{
+		Message: "val",
+	}
+	assert.Equal(t, "val", ms.One().Message)
 	assert.Equal(t, " key: val", ms.String())
 }
 
@@ -230,8 +232,8 @@ func TestStruct_nexted_field_name_tag(t *testing.T) {
 
 	nameErrStr := v.Errors["Name"]["required"]
 	extHomeErrStr := v.Errors["ext_info.home_page"]["required"]
-	assert.True(t, strings.HasPrefix(nameErrStr, "Display-Name"))
-	assert.True(t, strings.HasPrefix(extHomeErrStr, "ext_info.home_page"))
+	assert.True(t, strings.HasPrefix(nameErrStr.Message, "Display-Name"))
+	assert.True(t, strings.HasPrefix(extHomeErrStr.Message, "ext_info.home_page"))
 }
 
 func TestStruct_create_error(t *testing.T) {
@@ -256,7 +258,7 @@ func TestStruct_json_tag_name_parsing(t *testing.T) {
 	assert.True(t, v.Errors.HasField("test"))
 
 	errStr := v.Errors["test"]["email"]
-	assert.True(t, strings.HasPrefix(errStr, "test "))
+	assert.True(t, strings.HasPrefix(errStr.Message, "test "))
 
 	// Ensure that the field name is used if the JSON tag name is empty.
 	type Thing2 struct {
@@ -272,5 +274,5 @@ func TestStruct_json_tag_name_parsing(t *testing.T) {
 	assert.True(t, v.Errors.HasField("Field"))
 
 	errStr = v.Errors["Field"]["email"]
-	assert.True(t, strings.HasPrefix(errStr, "Field "))
+	assert.True(t, strings.HasPrefix(errStr.Message, "Field "))
 }

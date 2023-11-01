@@ -18,7 +18,7 @@ func TestValidation_custom_type(t *testing.T) {
 	v := validate.New(validate.M{
 		"mode": m1,
 	})
-	v.StringRules(validate.MS{
+	v.StringRules(map[string]string{
 		"mode": "required|in:abc,def",
 	})
 	assert.True(t, v.Validate())

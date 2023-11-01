@@ -208,7 +208,7 @@ func TestIssues_34(t *testing.T) {
 	v = validate.New(validate.M{
 		"age": s1,
 	})
-	v.StringRules(validate.MS{
+	v.StringRules(map[string]string{
 		"age": "required|in:1,2,3,4",
 	})
 
@@ -223,7 +223,7 @@ func TestIssues_34(t *testing.T) {
 	v = validate.New(validate.M{
 		"mode": m1,
 	})
-	v.StringRules(validate.MS{
+	v.StringRules(map[string]string{
 		"mode": "required|in:abc,def",
 	})
 	assert.True(t, v.Validate())
@@ -236,7 +236,7 @@ type issues36Form struct {
 }
 
 func (f issues36Form) Messages() map[string]string {
-	return validate.MS{
+	return map[string]string{
 		"required":      "{field}不能为空",
 		"Name.minLen":   "用户名最少7位",
 		"Name.required": "用户名不能为空",
@@ -247,7 +247,7 @@ func (f issues36Form) Messages() map[string]string {
 }
 
 func (f issues36Form) Translates() map[string]string {
-	return validate.MS{
+	return map[string]string{
 		"Name":  "用户名",
 		"Email": "邮箱",
 		"Age":   "年龄",
@@ -382,14 +382,24 @@ func TestPtrFieldEmbeddedInvalid(t *testing.T) {
 	err = vld.ValidateE(entity.Kind)
 	expected := validate.Errors{
 		"breed": validate.MS{
-			"min_len": "breed min length is 3",
+			"min_len": validate.D{
+				Message: "breed min length is 3",
+				Args: []any{
+					3,
+				},
+			},
 		},
 		"color": validate.MS{
-			"in": "color value must be in the enum [orange black brown]",
+			"in": validate.D{
+				Message: "color value must be in the enum [orange black brown]",
+				Args: []any{
+					"orange", "black", "brown",
+				},
+			},
 		},
 	}
 
-	assert.Equal(t, expected, err)
+	assert.Equal(t, expected.All(), err.(validate.Errors).All())
 	validate.ResetOption()
 }
 
