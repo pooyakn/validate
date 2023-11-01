@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gookit/goutil"
-	"github.com/gookit/validate"
+	"github.com/pooyakn/validate"
 )
 
 // UserForm struct
@@ -20,7 +20,7 @@ type UserForm struct {
 	Code     string
 }
 
-func main()  {
+func main() {
 	mux := http.NewServeMux()
 
 	handler1 := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +46,7 @@ func main()  {
 			// do something ...
 			fmt.Println(userForm.Name)
 		} else {
-			fmt.Println(v.Errors) // all error messages
+			fmt.Println(v.Errors)       // all error messages
 			fmt.Println(v.Errors.One()) // returns a random error message text
 		}
 	})

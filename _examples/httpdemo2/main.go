@@ -9,7 +9,7 @@ import (
 	"github.com/gookit/color"
 	"github.com/gookit/goutil"
 	"github.com/gookit/goutil/dump"
-	"github.com/gookit/validate"
+	"github.com/pooyakn/validate"
 )
 
 func main() {

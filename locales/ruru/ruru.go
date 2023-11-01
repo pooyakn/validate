@@ -1,6 +1,6 @@
 package ruru
 
-import "github.com/gookit/validate"
+import "github.com/pooyakn/validate"
 
 // Name language name
 const Name = "ru-RU"
