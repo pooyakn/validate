@@ -447,6 +447,25 @@ func (t *Translator) Message(validator, field string, args ...any) (msg string) 
 	return t.format(errMsg, field, args)
 }
 
+// ToMap converts the Errors to a map[string]map[string]map[string]interface{}
+func (es Errors) ToMap() map[string]map[string]map[string]any {
+	mm := make(map[string]map[string]map[string]any, len(es))
+
+	for field, fe := range es {
+		feMap := make(map[string]map[string]any, len(fe))
+
+		for validator, d := range fe {
+			feMap[validator] = map[string]any{
+				"message": d.Message,
+				"args":    d.Args,
+			}
+		}
+
+		mm[field] = feMap
+	}
+	return mm
+}
+
 // format message for the validator
 func (t *Translator) format(errMsg, field string, args []any) string {
 	argLen := len(args)

@@ -234,3 +234,29 @@ func TestMessageOnStruct_withNested(t *testing.T) {
 	dump.V(v.Errors)
 	is.Equal("birth day 出生日期有误", v.Errors.One())
 }
+
+func TestMessage_ToMap(t *testing.T) {
+	type TestStruct struct {
+		Start string `json:"start" validate:"date|minLen:10"`
+		End   string `json:"end" validate:"date|minLen:10|gteField:start"`
+	}
+
+	ts := &TestStruct{
+		Start: "2021-12-17",
+		End:   "2020-12-16",
+	}
+
+	assert.False(t, Gte(ts.End, ts.Start))
+
+	v := Struct(ts)
+	res := v.Validate()
+	assert.False(t, res)
+	assert.Equal(t, v.Errors.ToMap(), map[string]map[string]map[string]any{
+		"end": {
+			"gteField": {
+				"message": "end value should be greater or equal to the field start",
+				"args":    []any{"start"},
+			},
+		},
+	})
+}
